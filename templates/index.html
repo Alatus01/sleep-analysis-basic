@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sleep Analysis App</title>
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Sleep Health Analysis</h1>
+        
+        <div class="dashboard">
+            <div class="stats">
+                <h2>General Statistics</h2>
+                <div class="stat-card">
+                    <h3>Average Sleep Quality</h3>
+                    <p>{{ analysis.avg_sleep }} / 10</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Average Duration</h3>
+                    <p>{{ analysis.avg_duration }} hours</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Avg Physical Activity</h3>
+                    <p>{{ analysis.avg_physical_activity }} mins/day</p>
+                </div>
+            </div>
+            
+            <div class="plot">
+                {% if plot %}
+                    <img src="data:image/png;base64,{{ plot }}" alt="Sleep Analysis">
+                {% else %}
+                    <p class="error">Visualization not available</p>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="personal-analysis">
+            <h2>Personalized Analysis</h2>
+            <form action="/analyze" method="POST" onsubmit="return validateForm()">
+                <div class="form-group">
+                    <label for="age">Age:</label>
+                    <input type="number" id="age" name="age" required 
+                           value="{{ user_data.age if user_data else '' }}">
+                </div>
+                
+                <div class="form-group">
+                    <label for="occupation">Occupation:</label>
+                    <input type="text" id="occupation" name="occupation" required
+                           value="{{ user_data.occupation if user_data else '' }}">
+                </div>
+                
+                <div class="form-group">
+                    <label for="sleep_duration">Sleep Duration (hours):</label>
+                    <input type="number" step="0.1" id="sleep_duration" name="sleep_duration" required
+                           value="{{ user_data.sleep_duration if user_data else '' }}">
+                </div>
+                
+                <div class="form-group">
+                    <label for="sleep_quality">Sleep Quality (1-10):</label>
+                    <input type="number" min="1" max="10" id="sleep_quality" name="sleep_quality" required
+                           value="{{ user_data.sleep_quality if user_data else '' }}">
+                </div>
+                
+                <button type="submit">Analyze My Sleep</button>
+            </form>
+            
+            {% if recommendations %}
+            <div class="results">
+                <h3>Recommendations</h3>
+                <ul>
+                    {% for recommendation in recommendations %}
+                    <li>{{ recommendation }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+            
+            {% if error %}
+            <div class="error">
+                <p>{{ error }}</p>
+            </div>
+            {% endif %}
+        </div>
+        
+        <div class="data-insights">
+            <h2>Data Insights</h2>
+            <div class="insight">
+                <h3>Sleep Quality by Occupation</h3>
+                <ul>
+                    {% for occupation, score in analysis.sleep_by_occupation.items() %}
+                    <li><strong>{{ occupation }}:</strong> {{ "%.2f"|format(score) }}/10</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            
+            <div class="insight">
+                <h3>Sleep Disorders</h3>
+                <ul>
+                    {% for disorder, count in analysis.sleep_disorders.items() %}
+                    <li><strong>{{ disorder if disorder else "None" }}:</strong> {{ count }} people</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    function validateForm() {
+        const quality = document.getElementById('sleep_quality').value;
+        if (quality < 1 || quality > 10) {
+            alert('Sleep quality must be between 1 and 10');
+            return false;
+        }
+        return true;
+    }
+    </script>
+</body>
+</html>
