@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request
-from analysis import load_data, analyze_sleep, create_plot, get_recommendations
+from analysis import load_data, analyze_sleep, create_plot, get_recommendations, get_occupations
 import matplotlib
 matplotlib.use('Agg')  # Set non-interactive backend
 
@@ -14,13 +14,15 @@ def index():
     plot_data = create_plot(df)
     return render_template('index.html', 
                         analysis=analysis_results,
-                        plot=plot_data)
+                        plot=plot_data,
+                        occupations=get_occupations(df)
+    )
 
 @app.route('/analyze', methods=['POST'])
 def analyze():
     try:
         age = int(request.form['age'])
-        occupation = request.form['occupation']
+        occupation = str(request.form.get('occupation', '').strip().title())
         sleep_duration = float(request.form['sleep_duration'])
         sleep_quality = float(request.form['sleep_quality'])
         

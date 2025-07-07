@@ -48,8 +48,17 @@
                 
                 <div class="form-group">
                     <label for="occupation">Occupation:</label>
-                    <input type="text" id="occupation" name="occupation" required
-                           value="{{ user_data.occupation if user_data else '' }}">
+                    <select id="occupation" name="occupation" required>
+                        <option value="">Select your occupation</option>
+                        {% for occupation in occupations %}
+                        <option value="{{ occupation }}"
+                                {% if user_data %} 
+                                    {% if user_data.get('occupation', '').strip()|str == occupation|str %}selected{% endif %}
+                                {% endif %}>
+                            {{ occupation }}
+                        </option>
+                        {% endfor %}
+                    </select>
                 </div>
                 
                 <div class="form-group">

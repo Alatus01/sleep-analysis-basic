@@ -91,6 +91,21 @@ button {
     font-size: 1rem;
 }
 
+select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: white;
+    font-size: 16px;
+}
+
+select:focus {
+    border-color: #3498db;
+    outline: none;
+    box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
+}
+
 button:hover {
     background: #2980b9;
 }

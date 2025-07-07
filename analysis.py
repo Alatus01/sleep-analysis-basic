@@ -19,6 +19,11 @@ def load_data():
     
     return df
 
+def get_occupations(df):
+    """Get unique occupations from the dataset"""
+    occupations = df['Occupation'].unique().tolist()
+    return sorted((str(occ) for occ in occupations if str(occ).strip()))
+
 def analyze_sleep(df):
     """Calculate key metrics"""
     analysis = {
